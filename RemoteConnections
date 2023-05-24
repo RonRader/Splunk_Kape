@@ -1,3 +1,4 @@
+```Uses TerminalServices, Security, and RDP logs to query remote access to the computer```
 index=XXXX source="*_EvtxECmd_Output.csv" (EventId=4624 LogonType=10 OR PayloadData2="LogonType 10") OR (EventId=131) OR ((EventId=21 Provider="Microsoft-Windows-TerminalServices-LocalSessionManager") OR  EventId=23 OR (EventId=24 Provider="Microsoft-Windows-TerminalServices-LocalSessionManager") OR  (EventId=25 Provider="Microsoft-Windows-TerminalServices-LocalSessionManager")) OR (EventId=4778  OR EventId=4779) _index_earliest=0 Computer=*
 | sort 0 _time
 | eval combo_Targetusername=TargetDomainName + "\\" + TargetUserName
