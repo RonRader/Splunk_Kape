@@ -1,3 +1,4 @@
+```Uses Application Event 0 Logs```
 index=XXXX source="*_EvtxECmd_Output.csv" Provider= "MOVEit DMZ Audit" host=*
 | sort 0 _time
 | rex field=Payload "\"User\s\'(?<User>.+?)\'"
