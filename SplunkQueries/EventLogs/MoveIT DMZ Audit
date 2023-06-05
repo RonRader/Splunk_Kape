@@ -1,0 +1,20 @@
+index=XXXX source="*_EvtxECmd_Output.csv" Provider= "MOVEit DMZ Audit" host=*
+| sort 0 _time
+| rex field=Payload "\"User\s\'(?<User>.+?)\'"
+| rex field=Payload "\\\nIPAddress\:\s(?<IPAddress>.+?)\\\n"
+| rex field=Payload "\\\nUsername\:\s(?<Username>.+?)\\\n"
+| rex field=Payload "\\\nFileName\:\s(?<Filename>.+?)\\\n"
+| rex field=Payload "\\\nFolderPath\:\s(?<FolderName>.+?)\\\n"
+| rex field=Payload "\\\nAgentBrand\:\s(?<Agent>.+?)\\\n"
+| rex field=Payload "\\\nAgentVersion\:\s(?<AgentVer>.+?)\\\n"
+| rex field=Payload "\\\nXFerSize\:\s(?<XferSize>.+?)\\\n"
+| rex field=Payload "\"Data\"\:\"(?<Data>.+?)\\\n"
+| eval Time=strftime(_time,"%Y-%m-%d %H:%M:%S.%3N")
+| eval EventTimeSource=Channel . ": " . EventId
+| eval UserID = coalesce(Username,User)
+| eval EventType = Provider
+| eval ArtifactDetails = Data . coalesce(" |" . Agent . " " . AgentVer, "")
+| eval Comments=coalesce("XferSize: " . XferSize, "")
+| eval AddedOn=strftime(now(), "%Y-%m-%d")
+| eval SplunkQueryName="MOVEit DMZ Audit"
+| table Time, EventTimeSource, Computer, UserID, EventType, ArtifactDetails, IPAddress, Comments, HashOrSID, DateAdded
